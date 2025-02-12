@@ -1,3 +1,7 @@
+dataset:
+	docker build ./containers/dataset/ -t dataloader
+	docker run --network="host" dataloader 
+
 compose: ## Run the docker compose
 	docker compose up
 
