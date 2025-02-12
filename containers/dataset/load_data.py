@@ -51,7 +51,12 @@ class MnistDataloader(object):
         except pymongo.errors.ServerSelectionTimeoutError as err:
             print(err)
             print("Are you sure your database is on and this can reach it?")
+
         db = client["MNIST"]
+        clean_db = int(os.getenv('SCRUB_DB'))
+        if clean_db == 1:
+                client.drop_database("dataset")
+        db = client["dataset"]
         dataset = db["dataset"]
         dataset.insert_many([{"image": img, "size": "28x28", "label": label} 
                              for img, label in zip(x_train, y_train)])
