@@ -1,0 +1,5 @@
+services:
+  database:
+    ports:
+      - 27017:27017
+    image: "mongodb/mongodb-community-server"
