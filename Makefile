@@ -1,6 +1,6 @@
-dataset:
-	docker build ./containers/dataset/ -t dataloader
-	docker run --network="host" dataloader 
+dataset: ## Load the dataset into the database
+	#docker build ./containers/dataset/ -t dataloader # uncomment to rebuild
+	docker run --network="host" --env SCRUB_DB=1 dataloader
 
 compose: ## Run the docker compose
 	docker compose up
