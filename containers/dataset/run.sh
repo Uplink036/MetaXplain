@@ -1,15 +1,12 @@
 #!/bin/bash
 
 # Get data
-curl -L -o  MNIST-dataset.zip \
+curl -L -o  /tmp/data/MNIST-dataset.zip \
             https://www.kaggle.com/api/v1/datasets/download/hojjatk/mnist-dataset
 
 # Unzip data
-dataset=$(find MNIST*.zip)
-unzip $dataset
-
-# Get all requriments
-pip install -r requirments.txt
+dataset=$(find /tmp/data/*.zip)
+unzip $dataset -d /tmp/data/
 
 # Send all data to database
 python3 load_data.py

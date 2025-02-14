@@ -52,7 +52,7 @@ class MnistDataloader(object):
                              for img, label in zip(x_test, y_test)])
         print(f"Database has {dataset.count_documents({})} entires")
 
-    def _get_collection(self, colletion_name):
+    def _get_collection(self, collection_name):
         try:
             database_url = os.environ.get("DATABASE_URL")
             client = pymongo.MongoClient(database_url)
@@ -62,16 +62,18 @@ class MnistDataloader(object):
             print("Are you sure your database is on and this can reach it?")
 
         db = client["MNIST"]
-        if self._clean_db_check is True:
-            self._scrub_db(db, colletion_name)
-        return db[colletion_name]
+        if self._clean_db_check() is True:
+            print(f"Removing the collection {collection_name}")
+            self._scrub_db(db, collection_name)
+        return db[collection_name]
 
-    def _clean_db_check() -> bool:
-         return True if int(os.getenv('SCRUB_DB')) == 1 else False 
+    def _clean_db_check(self) -> bool:
+        return True if int(os.getenv('SCRUB_DB')) == 1 else False
          
     def _scrub_db(self, db, collection):
-                db[collection].drop()
+        db[collection].drop()
 
+        
 if __name__ == "__main__":
     print("Starting...")
     filepath = "/tmp/data/"
