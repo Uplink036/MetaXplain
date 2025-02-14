@@ -43,7 +43,16 @@ class MnistDataloader(object):
         print("Loading Data...")
         x_train, y_train = self.read_images_labels(self.training_images_filepath, self.training_labels_filepath)
         x_test, y_test = self.read_images_labels(self.test_images_filepath, self.test_labels_filepath)
-        print("Sending to database...")
+
+        print("Sending to database...", flush=True)
+        dataset = self._get_collection("dataset")
+        dataset.insert_many([{"image": img, "size": "28x28", "label": label, "status":"train"} 
+                             for img, label in zip(x_train, y_train)])
+        dataset.insert_many([{"image": img, "size": "28x28", "label": label, "status":"test"} 
+                             for img, label in zip(x_test, y_test)])
+        print(f"Database has {dataset.count_documents({})} entires")
+
+    def _get_collection(self, colletion_name):
         try:
             database_url = os.environ.get("DATABASE_URL")
             client = pymongo.MongoClient(database_url)
@@ -53,22 +62,22 @@ class MnistDataloader(object):
             print("Are you sure your database is on and this can reach it?")
 
         db = client["MNIST"]
-        clean_db = int(os.getenv('SCRUB_DB'))
-        if clean_db == 1:
-                client.drop_database("dataset")
-        db = client["dataset"]
-        dataset = db["dataset"]
-        dataset.insert_many([{"image": img, "size": "28x28", "label": label} 
-                             for img, label in zip(x_train, y_train)])
-        dataset.insert_many([{"image": img, "size": "28x28", "label": label} 
-                             for img, label in zip(x_test, y_test)])
-        print(f"Database has {dataset.count_documents({})} entires")
-        
+        if self._clean_db_check is True:
+            self._scrub_db(db, colletion_name)
+        return db[colletion_name]
+
+    def _clean_db_check() -> bool:
+         return True if int(os.getenv('SCRUB_DB')) == 1 else False 
+         
+    def _scrub_db(self, db, collection):
+                db[collection].drop()
+
 if __name__ == "__main__":
     print("Starting...")
-    dataloader = MnistDataloader("train-images.idx3-ubyte",
-                    "train-labels.idx1-ubyte",
-                    "t10k-images.idx3-ubyte",
-                    "t10k-labels.idx1-ubyte")
+    filepath = "/tmp/data/"
+    dataloader = MnistDataloader(filepath + "train-images.idx3-ubyte",
+                                 filepath + "train-labels.idx1-ubyte",
+                                 filepath + "t10k-images.idx3-ubyte",
+                                 filepath + "t10k-labels.idx1-ubyte")
     dataloader.load_data()
     print("Ending...")
