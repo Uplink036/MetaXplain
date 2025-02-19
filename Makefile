@@ -1,3 +1,7 @@
+model: ## Run the neural network independantly
+	# docker build ./containers/nn/ -t model # uncomment to rebuild
+	docker run --network="host" -v ${PWD}/containers/nn:/model model
+
 dataset: ## Load the dataset into the database
 	#docker build ./containers/dataset/ -t dataloader # uncomment to rebuild
 	docker run --network="host" --env SCRUB_DB=1 -v ${PWD}/containers/dataset:/loader dataloader
