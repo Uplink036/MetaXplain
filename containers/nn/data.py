@@ -1,6 +1,5 @@
 import os 
 import pymongo
-import dotenv
 
 class batchLoader():
     def __init__(self):
@@ -28,7 +27,7 @@ class batchLoader():
         self.client.close()
 
     def _batch_find(self):
-        data =  self.collection.find({}).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
+        data = self.collection.find({}).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
         self.batch_nr += 1
         return data
     
@@ -45,4 +44,4 @@ class batchLoader():
         if batch_size is None:
             batch_size = self.batch_size
 
-        return self.collection.count_documents({}) / batch_size
+        return round(self.collection.count_documents({}) / batch_size)
