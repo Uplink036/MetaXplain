@@ -10,7 +10,7 @@ def model():
     return NeuralNetwork().to(device)
 
 class TestNeuralNetwork():
-    def test_input(self, model):
+    def test_model_rand(self, model):
         x = torch.rand(1, 28, 28, device=device)
         logits = model(x)
         pred_probab = nn.Softmax(dim=1)(logits)
