@@ -23,16 +23,23 @@ class batchLoader():
         self.client = client
         self.database = client["MNIST"]
         self.collection = self.database["dataset"]
-        
-    def batch(self):
-        data = self.collection.find({"skip":self.batch_nr*self.batch_size,
-                                     "limit":self.batch_size})
-        labels = [x["label"] for x in data]
-        data = [x["image"] for x in data]
-        return labels, data
 
     def exit(self):
-        pass
+        self.client.close()
+
+    def _batch_find(self):
+        data =  self.collection.find({}).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
+        self.batch_nr += 1
+        return data
+    
+    def batch(self):
+        batch_data = self._batch_find()
+        labels = [0]*self.batch_size
+        inputs = [[]]*self.batch_size
+        for index, batch in enumerate(batch_data, 0):
+            labels[index ]= batch["label"]
+            inputs[index] = batch["image"]   
+        return labels, inputs
 
     def get_number_of_batches(self, batch_size = None):
         if batch_size is None:

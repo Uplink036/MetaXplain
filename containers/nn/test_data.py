@@ -21,6 +21,26 @@ class TestBatchLoader():
         loader.batch_size = 1
         labels, data = loader.batch()
         assert len(data) == 1
-        assert len(data[0]) == 784
+        assert len(data[0]) == (28*28)
         assert len(labels) == 1
         assert labels[0] >= 0 and labels[0] < 10
+
+    def test_get_batch_data(self, loader):
+        labels, data = loader.batch()
+        assert len(data) == 32
+        for iteration in range(0, loader.batch_size):
+            assert len(data[iteration]) == (28*28)
+        assert len(labels) == 32
+        for iteration in range(0, loader.batch_size):
+           assert labels[0] >= 0 and labels[0] < 10
+
+    def test_batch_find(self, loader):
+        id_list = []
+        for batch_nr in range(0, 5): 
+            batch_data = loader._batch_find()
+            for data in batch_data:
+                id_list.append(data["_id"])
+        set_ids = set(id_list)
+        number_of_ids = len(set_ids)
+        assert number_of_ids == 5*loader.batch_size 
+        assert loader.batch_nr == 5
