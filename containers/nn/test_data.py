@@ -1,7 +1,6 @@
 import pytest 
 from data import batchLoader
 
-
 @pytest.fixture()
 def loader() -> batchLoader:
     return batchLoader()
@@ -15,6 +14,7 @@ class TestBatchLoader():
 
     def test_get_batches(self, loader):
         batches = loader.get_number_of_batches()
+        assert type(batches) == int
         assert (batches*loader.batch_size) == 70_000
         
     def test_get_one_data(self, loader):
@@ -44,3 +44,4 @@ class TestBatchLoader():
         number_of_ids = len(set_ids)
         assert number_of_ids == 5*loader.batch_size 
         assert loader.batch_nr == 5
+
