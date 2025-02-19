@@ -13,8 +13,15 @@ class NeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.Linear(800, 10),
         )
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = self.flatten(x)
         logits = self.linear_relu_stack(x)
         return logits
+    
+    def predict(self, x):
+        logits = self.forward(x)
+        pred_prob = self.softmax(logits)
+        y_pred = pred_prob.argmax(1)
+        return y_pred
