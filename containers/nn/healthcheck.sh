@@ -1,5 +1,5 @@
 # Run the tests
-pytest
+pytest -p no:cacheprovider
 # Output 1 if they fail
 if [[ $? -ge 1 ]]
 then 
