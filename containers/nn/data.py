@@ -23,8 +23,13 @@ class batchLoader():
         self.client = client
         self.database = client["MNIST"]
         self.collection = self.database["dataset"]
+        
     def batch(self):
-        pass
+        data = self.collection.find({"skip":self.batch_nr*self.batch_size,
+                                     "limit":self.batch_size})
+        labels = [x["label"] for x in data]
+        data = [x["image"] for x in data]
+        return labels, data
 
     def exit(self):
         pass
