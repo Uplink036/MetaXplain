@@ -1,6 +1,7 @@
 # Project Specific
 *.zip
-
+*__pycache__/
+*.pytest_cache/
 
 # Template
 ## Prerequisites
