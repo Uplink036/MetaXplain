@@ -1,4 +1,5 @@
 FROM python
+ENV DATABASE_URL=mongodb://localhost:27017/
 WORKDIR /model
 COPY . .
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
