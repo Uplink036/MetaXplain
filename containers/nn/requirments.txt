@@ -2,3 +2,4 @@ numpy
 pymongo
 python-dotenv
 pytest
+tdqm

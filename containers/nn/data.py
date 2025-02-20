@@ -1,8 +1,12 @@
 import os 
 import pymongo
+import logging
+logger = logging.getLogger(__name__)
+
 
 class batchLoader():
     def __init__(self):
+        logger.info("Creating BatchLoader")
         self.batch_nr = 0
         self.batch_size = 32
         self.client = None
@@ -11,19 +15,21 @@ class batchLoader():
         self._init_db()
 
     def _init_db(self):
+        logger.info("Connecting to database")
         try:
             database_url = os.environ.get("DATABASE_URL")
             client = pymongo.MongoClient(database_url)
             client.server_info()
         except pymongo.errors.ServerSelectionTimeoutError as err:
-            print(err)
-            print("Are you sure your database is on and this can reach it?")
+            logger.fatal(err)
+            logger.fatal("Are you sure your database is on and this can reach it?")
             raise ConnectionError
         self.client = client
         self.database = client["MNIST"]
         self.collection = self.database["dataset"]
 
     def exit(self):
+        logger.info("Closing connection to database")
         self.client.close()
 
     def _batch_find(self):
@@ -41,6 +47,7 @@ class batchLoader():
         return labels, inputs
     
     def reset(self):
+        logger.info("Reseting to start")
         self.batch_nr = 0
 
     def get_number_of_batches(self, batch_size = None):

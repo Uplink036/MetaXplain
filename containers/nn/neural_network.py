@@ -1,9 +1,12 @@
 import torch
 from torch import nn
+import logging
+logger = logging.getLogger(__name__)
 
 # https://pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html
 class NeuralNetwork(nn.Module):
     def __init__(self):
+        logger.info("Creating NeuralNetwork")
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
