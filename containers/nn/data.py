@@ -39,6 +39,9 @@ class batchLoader():
             labels[index ]= batch["label"]
             inputs[index] = batch["image"]   
         return labels, inputs
+    
+    def reset(self):
+        self.batch_nr = 0
 
     def get_number_of_batches(self, batch_size = None):
         if batch_size is None:
