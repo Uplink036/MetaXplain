@@ -2,8 +2,11 @@ import pytest
 from data import batchLoader
 
 @pytest.fixture()
-def loader() -> batchLoader:
-    return batchLoader()
+def loader():
+    object = batchLoader()
+    yield object
+    object.exit()
+
 
 class TestBatchLoader():
     def test_loader_exist(self):
@@ -45,3 +48,21 @@ class TestBatchLoader():
         assert number_of_ids == 5*loader.batch_size 
         assert loader.batch_nr == 5
 
+    def test_train_test_data(self, loader):
+        train_batches = loader.get_number_of_batches(query={"status":"train"})
+        test_batches = loader.get_number_of_batches(query={"status":"train"})
+        assert train_batches > 0
+        assert test_batches > 0
+        assert train_batches > test_batches
+
+    def test_train_test_batch(self, loader):
+        train_labels, train_data = loader.batch({"status":"train"})
+        test_labels, test_data = loader.batch({"status":"test"})
+        assert len(train_data) == 32 and len(test_data) == 32
+        for i in range(0, loader.batch_size):
+            assert len(train_data[i]) == (28*28)
+            assert len(test_data[i]) == (28*28)
+        assert len(train_labels) == 32 and len(test_labels) == 32 
+        for i in range(0, loader.batch_size):
+           assert train_labels[i] >= 0 and train_labels[i] < 10
+           assert test_labels[i] >= 0 and test_labels[i] < 10

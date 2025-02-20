@@ -32,13 +32,14 @@ class batchLoader():
         logger.info("Closing connection to database")
         self.client.close()
 
-    def _batch_find(self):
-        data = self.collection.find({}).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
+    def _batch_find(self, query = {}):
+        
+        data = self.collection.find(query).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
         self.batch_nr += 1
         return data
     
-    def batch(self):
-        batch_data = self._batch_find()
+    def batch(self, query={}):
+        batch_data = self._batch_find(query)
         labels = [0]*self.batch_size
         inputs = [[]]*self.batch_size
         for index, batch in enumerate(batch_data, 0):
@@ -50,8 +51,8 @@ class batchLoader():
         logger.info("Reseting to start")
         self.batch_nr = 0
 
-    def get_number_of_batches(self, batch_size = None):
+    def get_number_of_batches(self, batch_size = None, query={}):
         if batch_size is None:
             batch_size = self.batch_size
 
-        return round(self.collection.count_documents({}) / batch_size)
+        return round(self.collection.count_documents(query) / batch_size)
