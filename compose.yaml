@@ -4,12 +4,13 @@ services:
     build: ./containers/nn/
     environment:
       - DATABASE_URL=mongodb://database:27017/
+      - CLEAN_LOGS=0
     volumes:
       - ./containers/nn:/model
       - ./logs:/logs
     depends_on:
       - database
-    restart: on-failure
+    restart: on-failure:3 
 
   database:
     ports:
