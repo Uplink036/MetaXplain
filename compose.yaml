@@ -1,4 +1,16 @@
 services:
+  model:
+    container_name: model
+    build: ./containers/nn/
+    environment:
+      - DATABASE_URL=mongodb://database:27017/
+    volumes:
+      - ./containers/nn:/model
+      - ./logs:/logs
+    depends_on:
+      - database
+    restart: on-failure
+
   database:
     ports:
       - 27017:27017
