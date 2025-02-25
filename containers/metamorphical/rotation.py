@@ -1,5 +1,4 @@
 import numpy as np
-import PIL
 from PIL import Image
 
 def np_to_pil(image):
