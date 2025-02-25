@@ -25,6 +25,13 @@ class loader():
         self.client = client
         self.database = client["MNIST"]
         self.collection = self.database["dataset"]
+        self.meta_collection = self.database["metamorphical"]
+        if self._clean_db_check() is True:
+            self.database["metamorphical"].drop()
+            self.meta_collection = self.database["metamorphical"]
+
+    def _clean_db_check(self) -> bool:
+        return True if int(os.getenv('SCRUB_DB')) == 1 else False
 
     def exit(self):
         logger.info("Closing connection to database")
@@ -34,7 +41,7 @@ class loader():
         return self.collection.find(query)
     
     def upload(self, item):
-        self.collection.insert_many(item)
+        self.meta_collection.insert_one(item)
 
     def upload_items(self, items):
         self.collection.insert_many(items)
