@@ -1,3 +1,7 @@
+meta:
+	#docker build ./containers/metamorphical/ -t metamorphical # uncomment to rebuild
+	docker run --network="host" --env SCRUB_DB=1  -v ${PWD}/containers/metamorphical:/metamorphical metamorphical
+
 model: ## Run the neural network independantly
 	# docker build ./containers/nn/ -t model # uncomment to rebuild
 	docker run --network="host" -v ${PWD}/containers/nn:/model model
