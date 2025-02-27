@@ -1,10 +1,10 @@
-
 import numpy as np
 import pytest 
+from scaling import upscale, downscale
 
 @pytest.fixture
 def image():
-    return np.arange(10).reshape((3,3))
+    return np.arange(9).reshape((3,3))
 
 def test_image_scaling_up(image):
     up_and_rescaled_image = upscale(image)
