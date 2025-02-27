@@ -3,20 +3,101 @@ import numpy as np
 from data import loader
 from rotation import rotate
 
+def transform_rotate(data, dataset, image):
+    for angle in range(-15, 15+5, 5):
+        random_noise =  random.normalvariate(0, 4)
+        rotated_image = rotate(image, angle+random_noise)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": rotated_image.flatten().tolist(),
+            "status": "rotation",
+            "angle": angle+random_noise
+        }
+        dataset.upload(meta_dict)
+
+from noise_addition import noisey
+def transform_noise(data, dataset, image):
+    for times in range(0, 5):
+        noisey_image = noisey(image)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": noisey_image.flatten().tolist(),
+            "status": "noise",
+            "iteration": times
+        }
+        dataset.upload(meta_dict)
+        image = noisey_image
+
+from scaling import upscale, downscale
+def transform_upscale(data, dataset, image):
+    for times in range(0, 5):
+        scaled_image = upscale(image)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": scaled_image.flatten().tolist(),
+            "status": "scale",
+            "iteration": times
+        }
+        dataset.upload(meta_dict)
+        image = scaled_image
+
+def transform_downscale(data, dataset, image):
+    for times in range(0, 5):
+        scaled_image = downscale(image)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": scaled_image.flatten().tolist(),
+            "status": "scale",
+            "iteration": times
+        }
+        dataset.upload(meta_dict)
+        image = scaled_image
+
+
+from shifting import shift
+def transform_shift(data, dataset, image):
+    for angle in range(0, 360, 15):
+        random_noise =  random.normalvariate(0, 4)
+        rotated_image = shift(image, angle+random_noise)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": rotated_image.flatten().tolist(),
+            "status": "shift",
+            "angle": angle+random_noise
+        }
+        dataset.upload(meta_dict)
+
+from cropping import crop
+def transform_crop(data, dataset, image):
+    for times in range(0, 5):
+        cropped_image = crop(image, times % 2)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": cropped_image.flatten().tolist(),
+            "status": "scale",
+            "direction": times % 2
+        }
+        dataset.upload(meta_dict)
+
+def transform_brightness():
+    pass
+
 if __name__ == "__main__":
     dataset = loader()
-    
+
     for data in dataset.find({"status":"test"}):
         image = data["image"]
         np_image = np.reshape(image, (28, 28))
-        for angle in range(-15, 15+5, 5):
-            random_noise =  random.normalvariate(0, 4)
-            rotated_image = rotate(np_image, angle+random_noise)
-            meta_dict = {
-                "label": data["label"],
-                "size": "28x28",
-                "image": rotated_image.flatten().tolist(),
-                "status": "rotation",
-                "angle": angle+random_noise
-            }
-            dataset.upload(meta_dict)
+        transform_rotate(data, dataset, np_image)
+        transform_noise(data, dataset, np_image)
+        transform_upscale(data, dataset, np_image)
+        transform_downscale(data, dataset, np_image)
+        transform_shift(data, dataset, np_image)
+        transform_crop(data, dataset, np_image)
+

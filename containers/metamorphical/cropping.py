@@ -25,7 +25,6 @@ def crop(image, direction = 0):
         else:
             coloums_to_delete = np.arange(0, choice)
     elif direction == 1:
-        options = range(0, shape[1] / 2)
         if choice > shape[0] / 2:
             coloums_to_delete = np.arange(choice+round(3/4*shape[0]), shape[0])
         else:
