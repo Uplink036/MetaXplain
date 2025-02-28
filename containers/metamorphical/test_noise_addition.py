@@ -6,8 +6,8 @@ from noise_addition import noisey
 def image():
     return np.arange(9).reshape((3,3))
 
-def test_image_cropping(image):
+def test_image_noise(image):
     cropped_image = noisey(image) # Add a direction
     assert cropped_image.shape == (3,3)
     assert (image == cropped_image).all() < 9
-    assert (image >= 0).all() == 9
+    assert (cropped_image >= 0).all()
