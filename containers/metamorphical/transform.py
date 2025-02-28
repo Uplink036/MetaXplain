@@ -85,8 +85,18 @@ def transform_crop(data, dataset, image):
         }
         dataset.upload(meta_dict)
 
-def transform_brightness():
-    pass
+from brightness import change_brightness
+def transform_brightness(data, dataset, image):
+    for level in range(1, 5):
+        cropped_image = change_brightness(image,1-level*0.1)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": cropped_image.flatten().tolist(),
+            "status": "brightness",
+            "level": 1-level*0.1
+        }
+        dataset.upload(meta_dict)
 
 if __name__ == "__main__":
     dataset = loader()
