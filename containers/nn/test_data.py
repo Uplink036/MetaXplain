@@ -3,17 +3,18 @@ from data import batchLoader
 
 @pytest.fixture()
 def loader():
-    object = batchLoader()
+    object = batchLoader("dataset")
     yield object
     object.exit()
 
 
 class TestBatchLoader():
     def test_loader_exist(self):
-        assert batchLoader() is not None
-        loader = batchLoader()
+        assert batchLoader("dataset") is not None
+        loader = batchLoader("dataset")
         assert loader.batch_size is 32
         assert loader.batch_nr is 0 
+        loader.exit()
 
     def test_get_batches(self, loader):
         batches = loader.get_number_of_batches()
