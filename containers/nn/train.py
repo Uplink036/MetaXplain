@@ -28,20 +28,20 @@ if __name__ == "__main__":
     net = NeuralNetwork().to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-    loader = batchLoader()
+    loader = batchLoader("dataset")
     batch_size = loader.batch_size
 
-    for epoch in tqdm(range(10)):  # loop over the dataset multiple times
+    for epoch in tqdm(range(5)):  # loop over the dataset multiple times
         running_loss = 0.0
         for iteration in tqdm(range(0, loader.get_number_of_batches(query={"status":"train"})-1)):
             # get the inputs; data is a list of [inputs, labels]
-            labels, inputs = loader.batch({"status":"train"})
+            data = loader.batch({"status":"train"})
+            inputs = [item["image"] for item in data]
+            labels = [item["label"] for item in data]
             inputs = torch.tensor(inputs, dtype=torch.float, device=device)
             labels = torch.tensor(labels, dtype=torch.long, device=device)
-            # zero the parameter gradients
             optimizer.zero_grad()
 
-            # forward + backward + optimize
             outputs = net(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
@@ -61,12 +61,16 @@ if __name__ == "__main__":
     targets = []
     predictions = []
     for iteration in tqdm(range(0, loader.get_number_of_batches(query={"status":"test"})-1)):
-        labels, inputs = loader.batch({"status":"train"})
+        data = loader.batch({"status":"test"})
+        inputs = [item["image"] for item in data]
+        labels = [item["label"] for item in data]
+        ids = [item["_id"] for item in data]
         inputs = torch.tensor(inputs, dtype=torch.float, device=device)
         outputs = net.predict(inputs)
 
         targets += labels
         predictions += [output.item() for output in outputs]
+        loader.transmit(list(zip(predictions, ids)))
 
     logger.info("Finished Testing")
     acc = accuracy(targets, predictions)
@@ -75,3 +79,28 @@ if __name__ == "__main__":
     logger.info(f"{rec=}")
     pre = precision(targets, predictions)
     logger.info(f"{pre=}")
+
+    logger.info("Starting metamorphical testing")
+    loader = batchLoader("metamorphical")
+    targets = []
+    predictions = []
+    for iteration in tqdm(range(0, loader.get_number_of_batches()-1)):
+        data = loader.batch()
+        inputs = [item["image"] for item in data]
+        labels = [item["label"] for item in data]
+        ids = [item["_id"] for item in data]
+        inputs = torch.tensor(inputs, dtype=torch.float, device=device)
+        outputs = net.predict(inputs)
+
+        targets += labels
+        predictions += [output.item() for output in outputs]
+        loader.transmit(list(zip(predictions, ids)))
+
+    logger.info("Finished Testing")
+    acc = accuracy(targets, predictions)
+    logger.info(f"{acc=}")
+    rec = recall(targets, predictions)
+    logger.info(f"{rec=}")
+    pre = precision(targets, predictions)
+    logger.info(f"{pre=}")
+    logger.info("Exiting...")
