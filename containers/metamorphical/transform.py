@@ -52,7 +52,7 @@ def transform_crop(data, dataset, image):
             "label": data["label"],
             "size": "28x28",
             "image": cropped_image.flatten().tolist(),
-            "status": "scale",
+            "status": "crop",
             "direction": times % 2
         }
         dataset.upload(meta_dict)
