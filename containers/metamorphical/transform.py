@@ -30,6 +30,34 @@ def transform_noise(data, dataset, image):
         dataset.upload(meta_dict)
         image = noisey_image
 
+from scaling import upscale, downscale
+def transform_upscale(data, dataset, image):
+    for times in range(0, 5):
+        scaled_image = upscale(image)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": scaled_image.flatten().tolist(),
+            "status": "scale",
+            "iteration": times
+        }
+        dataset.upload(meta_dict)
+        image = scaled_image
+
+def transform_downscale(data, dataset, image):
+    for times in range(0, 5):
+        scaled_image = downscale(image)
+        meta_dict = {
+            "label": data["label"],
+            "size": "28x28",
+            "image": scaled_image.flatten().tolist(),
+            "status": "scale",
+            "iteration": times
+        }
+        dataset.upload(meta_dict)
+        image = scaled_image
+
+
 from shifting import shift
 def transform_shift(data, dataset, image):
     for angle in range(0, 360, 15):
@@ -78,6 +106,8 @@ if __name__ == "__main__":
         np_image = np.reshape(image, (28, 28))
         transform_rotate(data, dataset, np_image)
         transform_noise(data, dataset, np_image)
+        transform_upscale(data, dataset, np_image)
+        transform_downscale(data, dataset, np_image)
         transform_shift(data, dataset, np_image)
         transform_crop(data, dataset, np_image)
-        transform_brightness(data, dataset, np_image)
+
