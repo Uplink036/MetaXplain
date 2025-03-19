@@ -38,7 +38,7 @@ def transform_upscale(data, dataset, image):
             "label": data["label"],
             "size": "28x28",
             "image": scaled_image.flatten().tolist(),
-            "status": "scale",
+            "status": "scaleUp",
             "iteration": times
         }
         dataset.upload(meta_dict)
@@ -51,7 +51,7 @@ def transform_downscale(data, dataset, image):
             "label": data["label"],
             "size": "28x28",
             "image": scaled_image.flatten().tolist(),
-            "status": "scale",
+            "status": "scaleDown",
             "iteration": times
         }
         dataset.upload(meta_dict)
@@ -110,4 +110,5 @@ if __name__ == "__main__":
         transform_downscale(data, dataset, np_image)
         transform_shift(data, dataset, np_image)
         transform_crop(data, dataset, np_image)
+        transform_brightness(data, dataset, np_image)
 
