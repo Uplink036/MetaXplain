@@ -1,14 +1,16 @@
-meta:
-	#docker build ./containers/metamorphical/ -t metamorphical # uncomment to rebuild
-	docker run --network="host" --env SCRUB_DB=1  -v ${PWD}/containers/metamorphical:/metamorphical metamorphical
-
+meta: ## Run the methamorphical (loader) container
+	docker build ./containers/metamorphical/ -t metamorphical # uncomment to rebuild
+	docker compose start meta-loader
+	
 model: ## Run the neural network independantly
 	# docker build ./containers/nn/ -t model # uncomment to rebuild
-	docker run --network="host" -v ${PWD}/containers/nn:/model model
-
+	docker compose start model
 dataset: ## Load the dataset into the database
 	#docker build ./containers/dataset/ -t dataloader # uncomment to rebuild
-	docker run --network="host" --env SCRUB_DB=1 -v ${PWD}/containers/dataset:/loader dataloader
+	docker compose start loader
+
+database: ## Start only the database
+	docker compose start database
 
 compose: ## Run the docker compose
 	docker compose up --detach
