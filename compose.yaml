@@ -36,6 +36,7 @@ services:
       - ./containers/dataset:/loader
     depends_on:
       - database
+    restart: on-failure:5
 
 
   database:
