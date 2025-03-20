@@ -16,8 +16,8 @@ class batchLoader():
         self.database = None
         self._init_db()
         self.collection: pymongo.collection.Collection = self.database[collection_name]
-        self.database[collection_name+"_results"].drop()
         self.results = self.database[collection_name+"_results"]
+        self.collection_name = collection_name
 
     def _init_db(self):
         logger.info("Connecting to database")
@@ -35,6 +35,10 @@ class batchLoader():
     def exit(self):
         logger.info("Closing connection to database")
         self.client.close()
+
+    def clean_results(self):
+        self.database[self.collection_name+"_results"].drop()
+        self.results = self.database[self.collection_name+"_results"]
 
     def _batch_find(self, query = {}):
         data = self.collection.find(query).skip(self.batch_nr*self.batch_size).limit(self.batch_size)
