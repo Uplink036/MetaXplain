@@ -1,0 +1,6 @@
+pymongo
+matplotlib
+numpy
+seaborn
+seaborn_image
+scikit-learn
