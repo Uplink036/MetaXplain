@@ -8,8 +8,35 @@ services:
       - ./containers/nn:/model
       - ./logs:/logs
     depends_on:
-      - database
+      meta-loader:
+        condition: service_completed_successfully
     restart: on-failure:3 
+
+    
+  meta-loader:
+    container_name: meta-loader
+    build: ./containers/metamorphical/
+    environment:
+      - DATABASE_URL=mongodb://database:27017/
+      - SCRUB_DB=1
+    volumes:
+      - ./containers/metamorphical:/metamorphical
+    depends_on:
+      loader:
+        condition: service_completed_successfully
+
+
+  loader:
+    container_name: loader
+    build: ./containers/dataset/
+    environment:
+      - DATABASE_URL=mongodb://database:27017/
+      - SCRUB_DB=1
+    volumes:
+      - ./containers/dataset:/loader
+    depends_on:
+      - database
+
 
   database:
     ports:
