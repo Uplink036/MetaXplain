@@ -1,6 +1,7 @@
 pymongo
 matplotlib
 numpy
+pandas
 seaborn
 seaborn_image
 scikit-learn
